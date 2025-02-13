@@ -1,22 +1,19 @@
-# Use Debian as the base image
-FROM debian:jessie
+# Use Ubuntu 16.04 as the base image
+FROM ubuntu:16.04
 
-# Set the working directory inside the container to /legacy-app
-WORKDIR /legacy-app
+# Set the working directory inside the container
+WORKDIR /app
 
-# Copy all files from the host’s current directory into the container’s /legacy-app directory
+# Copy all files from the host’s current directory into the container’s /app directory
 COPY . .
 
-# Update package lists and install application dependencies along with debugging tools, then clean up the cache
+# Update package lists and install required packages
 RUN apt-get update && \
-    apt-get install -y debug-tool packageX && \
+    apt-get install -y curl git nano && \
     apt-get clean
 
-# Set an environment variable with a hardcoded secret (for demonstration purposes)
-ENV SECRET_KEY="hardcoded_secret_value"
+# Expose port 8080 so that the service can be accessed externally
+EXPOSE 8080
 
-# Expose ports 5000 and 6000 so the application can communicate externally
-EXPOSE 5000 6000
-
-# Define the default command to start the legacy application
-CMD ["./run-legacy-app"]
+# Define the default command to run when the container starts
+CMD ["./start-service.sh"]

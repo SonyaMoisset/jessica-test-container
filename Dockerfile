@@ -1,5 +1,5 @@
 # Use Debian as the base image
-FROM debian:latest
+FROM debian:jessie
 
 # Set the working directory inside the container to /legacy-app
 WORKDIR /legacy-app

@@ -1,33 +1,19 @@
-# Step 1: Use an outdated base image with known vulnerabilities
-FROM ubuntu:18.04
+# Use Ubuntu 16.04 as the base image
+FROM ubuntu:16.04
 
-# Step 2: Set the working directory
+# Set the working directory inside the container
 WORKDIR /app
 
-# Step 3: Install application dependencies with no version pinning (vulnerable practice)
+# Copy all files from the host’s current directory into the container’s /app directory
+COPY . .
+
+# Update package lists and install required packages
 RUN apt-get update && \
-    apt-get install -y \
-    python3 \
-    python3-pip \
-    curl \
-    wget \
-    git && \
-    rm -rf /var/lib/apt/lists/*
+    apt-get install -y curl git nano && \
+    apt-get clean
 
-# Step 4: Add a secret API key in an environment variable (vulnerability: hardcoded secret)
-ENV API_KEY=12345secretapikey
+# Expose port 8080 so that the service can be accessed externally
+EXPOSE 8080
 
-# Step 5: Expose sensitive ports
-EXPOSE 22 8080
-
-# Step 6: Copy application files
-COPY requirements.txt .
-RUN pip3 install -r requirements.txt
-
-# Step 7: Use a hardcoded user account and permissions (vulnerability)
-RUN useradd -m insecureuser && \
-    echo "insecureuser:weakpassword" | chpasswd && \
-    chmod -R 777 /app
-
-# Step 8: Run the application with a potentially dangerous command
-CMD ["python3", "app.py"]
+# Define the default command to run when the container starts
+CMD ["./start-service.sh"]

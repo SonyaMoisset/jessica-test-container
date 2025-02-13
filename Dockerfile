@@ -1,5 +1,5 @@
 # Use Ubuntu 16.04 as the base image
-FROM ubuntu:16.04
+FROM ubuntu:20.04
 
 # Set the working directory inside the container
 WORKDIR /app

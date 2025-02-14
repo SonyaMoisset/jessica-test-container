@@ -48,7 +48,7 @@ jobs:
         with:
           payload: |
             {
-              "text": "Legacy application container build, scan, and signing completed successfully. Image: patchcorp/legacy-app:latest."
+              "text": "Legacy application container build and container security scan completed successfully. Image: patchcorp/legacy-app:latest."
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

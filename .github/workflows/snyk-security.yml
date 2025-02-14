@@ -1,4 +1,4 @@
-name: CI/CD Pipeline for Container Security
+name: Snyk Container Security
 
 on:
   push:

@@ -1,26 +1,52 @@
-name: Snyk Container
-on: push
+name: CI/CD Pipeline for Container Security
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
 jobs:
-  snyk:
+  build-scan-sign:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - name: Build a Docker image
-      run: docker build -t your/image-to-test .
-    - name: Run Snyk to check Docker image for vulnerabilities
-      # Snyk can be used to break the build when it detects vulnerabilities.
-      # In this case we want to upload the issues to GitHub Code Scanning
-      continue-on-error: true
-      uses: snyk/actions/docker@master
-      env:
-        # In order to use the Snyk Action you will need to have a Snyk API token.
-        # See https://docs.snyk.io/integrations/ci-cd-integrations/github-actions-integration#getting-your-snyk-token
-        # or you can sign up for free at https://snyk.io/login
-        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-      with:
-        image: your/image-to-test
-        args: --file=Dockerfile
-    - name: Upload result to GitHub Code Scanning
-      uses: github/codeql-action/upload-sarif@v3
-      with:
-        sarif_file: snyk.sarif
+      # Step 1: Check out the repository code
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Step 2: Build the Docker image for the legacy application
+      - name: Build Docker image
+        run: |
+          docker build -t patchcorp/legacy-app:latest .
+
+      # Step 3: Run Snyk Container scan on the built image
+      - name: Snyk Container Scan
+        continue-on-error: true
+        uses: snyk/actions/docker@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          image: patchcorp/legacy-app:latest
+
+      # Step 4: Upload result to GitHub Code Scanning
+      - name: Upload result to GitHub Code Scanning
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: snyk.sarif
+
+      # Step 5: Sign the Docker image using Docker Content Trust
+      - name: Sign Docker image
+        run: |
+          export DOCKER_CONTENT_TRUST=1
+          docker trust sign patchcorp/legacy-app:latest
+
+      # Step 6: Send a Slack notification for the completed process
+      - name: Notify on Slack
+        uses: slackapi/slack-github-action@v1
+        with:
+          payload: |
+            {
+              "text": "Legacy application container build, scan, and signing completed successfully. Image: patchcorp/legacy-app:latest."
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

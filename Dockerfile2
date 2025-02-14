@@ -1,0 +1,22 @@
+# Use Ubuntu 14.04 as the base image (an older version that is no longer maintained)
+FROM ubuntu:14.04
+
+# Set the working directory inside the container to /legacy-app
+WORKDIR /legacy-app
+
+# Copy all files from the host’s current directory into the container’s /legacy-app directory
+COPY . .
+
+# Update package lists, install dependencies (debug-tool and packageX), and clean up the apt cache
+RUN apt-get update && \
+    apt-get install -y debug-tool packageX && \
+    apt-get clean
+
+# Set an environment variable with a hardcoded secret (for demonstration purposes)
+ENV SECRET_KEY="hardcoded_secret_value"
+
+# Expose ports 5000 and 6000 for external communication
+EXPOSE 5000 6000
+
+# Define the default command to run the legacy application
+CMD ["./run-legacy-app"]

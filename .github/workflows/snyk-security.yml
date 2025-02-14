@@ -42,12 +42,6 @@ jobs:
         with:
           sarif_file: snyk.sarif
 
-      # Step 5: Sign the Docker image using Docker Content Trust
-      - name: Sign Docker image
-        run: |
-          export DOCKER_CONTENT_TRUST=1
-          docker trust sign patchcorp/legacy-app:latest
-
       # Step 6: Send a Slack notification for the completed process
       - name: Notify on Slack
         uses: slackapi/slack-github-action@v1

@@ -31,9 +31,7 @@ jobs:
         with:
           image: patchcorp/legacy-app:latest
           args: --sarif-file-output=snyk.sarif
-
-      - name: Replace security-severity undefined for license-related findings 
-         run: sed -i 's/"security-severity": "undefined"/"security-severity": "0"/g' snyk.sarif
+        run: sed -i 's/"security-severity": "undefined"/"security-severity": "0"/g' snyk.sarif
 
       # Step 4: Upload result to GitHub Code Scanning
       - name: Upload result to GitHub Code Scanning

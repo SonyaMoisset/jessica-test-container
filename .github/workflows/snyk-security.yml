@@ -7,7 +7,9 @@ on:
     branches: [ main ]
 
 jobs:
-  build-scan-sign:
+  security:
+    permissions:
+        security-events: write
     runs-on: ubuntu-latest
     steps:
       # Step 1: Check out the repository code

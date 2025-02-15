@@ -1,5 +1,5 @@
 # Use Ubuntu 14.04 as the base image (an older version that is no longer maintained)
-FROM ubuntu:14.04
+FROM ubuntu:20.04
 
 # Set the working directory inside the container to /legacy-app
 WORKDIR /legacy-app
